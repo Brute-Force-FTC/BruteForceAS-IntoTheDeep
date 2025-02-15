@@ -11,4 +11,4 @@ Instructions to push:
 7) git commit -m "message"
 8) git push origin main
 
-**CenterStage FTC Season 2023-2024**
+**Into the Deep FTC Season 2023-2024**
