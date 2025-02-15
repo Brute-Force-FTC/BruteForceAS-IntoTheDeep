@@ -80,7 +80,7 @@ public class Intake extends Subsystem {
                                 0.2,
                                 this),
                         new ServoToPosition(clawArm,
-                                0.6,
+                                0.4,
                                 this),
                         new ServoToPosition(clawRotate,
                                 0.8,
@@ -89,7 +89,7 @@ public class Intake extends Subsystem {
                 new Delay(1.0),
                 new ParallelGroup(
                         new ServoToPosition(clawArm,
-                                0.325,
+                                0.675,
                                 this),
                         new ServoToPosition(clawRotate,
                                 0.85,

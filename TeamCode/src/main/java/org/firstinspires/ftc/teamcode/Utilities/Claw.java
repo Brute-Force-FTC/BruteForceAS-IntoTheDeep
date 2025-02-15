@@ -61,7 +61,7 @@ public class Claw extends Subsystem {
                         Copen,
                         this),
                 new ServoToPosition(clawArm,
-                        0.575,
+                        0.425,
                         this),
                 new ServoToPosition(clawRotate,
                         0,
@@ -78,7 +78,7 @@ public class Claw extends Subsystem {
                         Copen,
                         this),
                 new ServoToPosition(clawArm,
-                        0.575,
+                        0.425,
                         this),
                 new ServoToPosition(clawRotate,
                         0,
@@ -101,10 +101,10 @@ public class Claw extends Subsystem {
         return new SequentialGroup(
                 new ParallelGroup(
                         new ServoToPosition(clawRotate,
-                                0,
+                                0.0,
                                 this),
                         new ServoToPosition(clawArm,
-                                1.0,
+                                0.2,
                                 this)
                 ),
                 new Delay(0.3),
@@ -117,7 +117,7 @@ public class Claw extends Subsystem {
                                 0,
                                 this),
                         new ServoToPosition(clawArm,
-                                0.575,
+                                0.425,
                                 this),
                         new ServoToPosition(clawSpin,
                                 CFSbot,
@@ -129,7 +129,7 @@ public class Claw extends Subsystem {
     public Command reset() {
         return new ParallelGroup(
                 new ServoToPosition(clawArm,
-                        0.7875,
+                        0.2125,
                         this),
                 new ServoToPosition(clawRotate,
                         0,
