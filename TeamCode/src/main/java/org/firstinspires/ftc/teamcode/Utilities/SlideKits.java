@@ -56,14 +56,14 @@ public class SlideKits extends Subsystem {
 
     public Command auto2() {
         return new RunToPosition(motor,
-                1000.0,
+                975.0,
                 controller,
                 this);
     }
 
     public Command auto() {
         return new RunToPosition(motor,
-                1050.0,
+                950.0,
                 controller,
                 this);
     }

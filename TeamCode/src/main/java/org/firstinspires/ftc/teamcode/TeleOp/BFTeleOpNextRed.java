@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
@@ -9,13 +10,31 @@ import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Light;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.RobotLog;
+import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.command.CommandManager;
+import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup;
+import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
+import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
+import com.rowanmcalpin.nextftc.ftc.driving.MecanumDriverControlled;
+import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadEx;
+import com.rowanmcalpin.nextftc.ftc.gamepad.Joystick;
+import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 import com.rowanmcalpin.nextftc.pedro.DriverControlled;
+import com.rowanmcalpin.nextftc.pedro.FollowPath;
 import com.rowanmcalpin.nextftc.pedro.PedroOpMode;
 
 import org.firstinspires.ftc.teamcode.Utilities.BackClaw;
+import org.firstinspires.ftc.teamcode.Utilities.BruteForceRobot;
 import org.firstinspires.ftc.teamcode.Utilities.Claw;
 import org.firstinspires.ftc.teamcode.Utilities.Extension;
 import org.firstinspires.ftc.teamcode.Utilities.Intake;
@@ -125,8 +144,21 @@ public class BFTeleOpNextRed extends PedroOpMode {
         gamepadManager.getGamepad1().getRightTrigger().setPressedCommand(value -> Extension.INSTANCE.out());
 
         // BackClaw Commands
-        gamepadManager.getGamepad2().getA().setPressedCommand(BackClaw.INSTANCE::pickUp);
-        gamepadManager.getGamepad2().getX().setPressedCommand(BackClaw.INSTANCE::prepare);
+        gamepadManager.getGamepad2().getA().setPressedCommand( () ->
+                new SequentialGroup(
+                        BackClaw.INSTANCE.setUp(),
+                        SlideKits.INSTANCE.middle(),
+                        BackClaw.INSTANCE.spinT()
+                ));
+        gamepadManager.getGamepad2().getX().setPressedCommand( () ->
+                new SequentialGroup(
+                        BackClaw.INSTANCE.clip(),
+                        new Delay(0.5),
+                        Intake.INSTANCE.drop(),
+                        new Delay(0.5),
+                        BackClaw.INSTANCE.prepare(),
+                        SlideKits.INSTANCE.low()
+                ));
 
         // BackClaw Open
         gamepadManager.getGamepad2().getDpadDown().setPressedCommand(Intake.INSTANCE::drop);
@@ -168,17 +200,11 @@ public class BFTeleOpNextRed extends PedroOpMode {
             telemetry.addLine("Switched pipeline to 2, right red");
         }
 
-        /*if ((gamepad2.left_stick_y != 0) ) {
-            SlideKits.INSTANCE.getDefaultCommand().stop(false);
-            slideKit.setPower(-gamepad2.left_stick_y);
-        }*/
-
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("slideKitPosition", SlideKits.INSTANCE.motor.getCurrentPosition());
         telemetry.addData("slideKitTargetPosition", SlideKits.INSTANCE.controller.getTarget());
-        telemetry.addData( "gamepadManager.getGamepad2().getLeftStick().getYAxis().getValue()", gamepadManager.getGamepad2().getLeftStick().getYAxis().getValue());
         telemetry.update();
     }
 }

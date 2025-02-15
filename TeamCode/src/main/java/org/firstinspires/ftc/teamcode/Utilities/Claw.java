@@ -104,7 +104,7 @@ public class Claw extends Subsystem {
                                 0.0,
                                 this),
                         new ServoToPosition(clawArm,
-                                0.2,
+                                0.175,
                                 this)
                 ),
                 new Delay(0.3),

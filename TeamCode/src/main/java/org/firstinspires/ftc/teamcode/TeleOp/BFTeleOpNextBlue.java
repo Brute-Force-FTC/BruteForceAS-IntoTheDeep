@@ -144,20 +144,19 @@ public class BFTeleOpNextBlue extends PedroOpMode {
         gamepadManager.getGamepad1().getRightTrigger().setPressedCommand(value -> Extension.INSTANCE.out());
 
         // BackClaw Commands
-        //gamepadManager.getGamepad2().getA().setPressedCommand(BackClaw.INSTANCE::pickUp);
         gamepadManager.getGamepad2().getA().setPressedCommand( () ->
                 new SequentialGroup(
                         BackClaw.INSTANCE.setUp(),
                         SlideKits.INSTANCE.middle(),
                         BackClaw.INSTANCE.spinT()
                 ));
-        //gamepadManager.getGamepad2().getX().setPressedCommand(BackClaw.INSTANCE::prepare);
         gamepadManager.getGamepad2().getX().setPressedCommand( () ->
                 new SequentialGroup(
                         BackClaw.INSTANCE.clip(),
                         new Delay(0.5),
-                        BackClaw.INSTANCE.prepare(),
+                        Intake.INSTANCE.drop(),
                         new Delay(0.5),
+                        BackClaw.INSTANCE.prepare(),
                         SlideKits.INSTANCE.low()
                 ));
 
@@ -201,17 +200,11 @@ public class BFTeleOpNextBlue extends PedroOpMode {
             telemetry.addLine("Switched pipeline to 1, right blue");
         }
 
-        /*if ((gamepad2.left_stick_y != 0) ) {
-            SlideKits.INSTANCE.getDefaultCommand().stop(false);
-            slideKit.setPower(-gamepad2.left_stick_y);
-        }*/
-
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("slideKitPosition", SlideKits.INSTANCE.motor.getCurrentPosition());
         telemetry.addData("slideKitTargetPosition", SlideKits.INSTANCE.controller.getTarget());
-        telemetry.addData( "gamepadManager.getGamepad2().getLeftStick().getYAxis().getValue()", gamepadManager.getGamepad2().getLeftStick().getYAxis().getValue());
         telemetry.update();
     }
 }

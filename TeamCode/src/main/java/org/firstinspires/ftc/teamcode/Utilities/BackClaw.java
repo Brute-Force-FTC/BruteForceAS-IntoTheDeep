@@ -32,15 +32,15 @@ public class BackClaw extends Subsystem {
     public Command setUp() {
         return new SequentialGroup(
                 new ServoToPosition(clawBack,
-                        0.4,
+                        CBclose,
                         this),
-                new Delay(0.2),
+                new Delay(0.3),
                 new ParallelGroup(
                     new ServoToPosition(clawBackRotateRight,
-                            0.775,
+                            0.8,
                             this),
                     new ServoToPosition(clawBackRotateLeft,
-                            0.225,
+                            0.2,
                             this),
                     new ServoToPosition(clawBackSpin,
                             CSbot,

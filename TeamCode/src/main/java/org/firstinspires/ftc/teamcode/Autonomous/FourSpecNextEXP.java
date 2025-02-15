@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.NextFTC.FollowPathWithSpeed;
 import org.firstinspires.ftc.teamcode.Utilities.BackClaw;
 import org.firstinspires.ftc.teamcode.Utilities.Claw;
 import org.firstinspires.ftc.teamcode.Utilities.Extension;
+import org.firstinspires.ftc.teamcode.Utilities.Intake;
 import org.firstinspires.ftc.teamcode.Utilities.SlideKits;
 
 import pedroPathing.constants.FConstants;
@@ -27,14 +28,12 @@ import pedroPathing.constants.LConstants;
 @Autonomous(name = "FourSpecNextEXPPP????😪🤤🥴😵💦🫳", group = "Autonomous")
 public class FourSpecNextEXP extends PedroOpMode {
     public FourSpecNextEXP() {
-        super(Claw.INSTANCE, SlideKits.INSTANCE, BackClaw.INSTANCE, Extension.INSTANCE);
+        super(Claw.INSTANCE, SlideKits.INSTANCE, BackClaw.INSTANCE, Extension.INSTANCE, Intake.INSTANCE);
     }
 
     private final Pose startPose = new Pose(9.5, 60, Math.toRadians(0));
 
     private final Pose scorePreload = new Pose(38, 60, Math.toRadians(0));
-
-    private final Pose middlePose = new Pose(37.4, 60, Math.toRadians(0));
 
     private final Pose moveBlock1 = new Pose(50, 44, Math.toRadians(180));
     private final Pose moveBlock1Control1 = new Pose(20, 36, Math.toRadians(180));
@@ -47,24 +46,22 @@ public class FourSpecNextEXP extends PedroOpMode {
 
     private final Pose pickupSpec1 = new Pose(8, 32, Math.toRadians(180));
 
-    private final Pose scoreSpec = new Pose(37.5, 71, Math.toRadians(0));
-    private final Pose scoreSpec2 = new Pose(37.5, 73, Math.toRadians(0));
-    private final Pose scoreSpec3 = new Pose(37.5, 75, Math.toRadians(0));
+    private final Pose scoreSpec = new Pose(37.5, 68, Math.toRadians(0));
+    private final Pose scoreSpec2 = new Pose(37.5, 70, Math.toRadians(0));
+    private final Pose scoreSpec3 = new Pose(37.5, 73, Math.toRadians(0));
     private final Pose scoreSpecControl = new Pose(4, 75, Math.toRadians(0));
-
-    private final Pose midSpec = new Pose(37.475, 71, Math.toRadians(0));
-    //4%: new Pose(36.12, 69.84, Math.toRadians(7.2));
-    //3%: new Pose(36.34. 70.13, Math.toRadians(5.4));
-    //2%: new Pose(36.56, 70.42, Math.toRadians(3.6));
-    //1%: new Pose(36.78, 70.71, Math.toRadians(1.8));
 
     private final Pose positionSpec = new Pose(15, 42, Math.toRadians(180));
 
     private final Pose pickupSpec = new Pose(9, 42, Math.toRadians(180));
 
+    private final Pose controlSpec = new Pose(32, 68, Math.toRadians(0));
+    private final Pose controlSpec2 = new Pose(32, 70, Math.toRadians(0));
+    private final Pose controlSpec3 = new Pose(32, 73, Math.toRadians(0));
 
-    private PathChain scoreSpecimen1, block1, block12, pushBlock1, block2, pushBlock2,
-            scoreSpecimen2, prepSpec3, spec3, scoreSpecimen3, prepSpec32, scoreSpecimen4;
+
+    private PathChain scoreSpecimen1, block1, pushBlock1, block2, pushBlock2, scoreSpecimen42,
+            scoreSpecimen2, prepSpec3, spec3, scoreSpecimen3, scoreSpecimen32, scoreSpecimen4, scoreSpecimen22;
 
     public void buildPaths() {
 
@@ -74,13 +71,8 @@ public class FourSpecNextEXP extends PedroOpMode {
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
-        block12 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scorePreload), new Point(middlePose)))
-                .setConstantHeadingInterpolation(middlePose.getHeading())
-                .build();
-
         block1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(middlePose), new Point(moveBlock1Control1), new Point(moveBlock1)))
+                .addPath(new BezierCurve(new Point(scorePreload), new Point(moveBlock1Control1), new Point(moveBlock1)))
                 .setTangentHeadingInterpolation()
                 .setReversed(true)
                 .build();
@@ -102,19 +94,20 @@ public class FourSpecNextEXP extends PedroOpMode {
                 .build();
 
         scoreSpecimen2 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(pickupSpec1), new Point (scoreSpecControl), new Point(scoreSpec)))
-                .setLinearHeadingInterpolation(pickupSpec1.getHeading(), scoreSpec.getHeading())
+                .addPath(new BezierLine(new Point(pickupSpec1), new Point(controlSpec)))
+                .setLinearHeadingInterpolation(pickupSpec1.getHeading(), controlSpec.getHeading())
+                .setZeroPowerAccelerationMultiplier(3)
+                .build();
+
+        scoreSpecimen22 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(controlSpec), new Point(scoreSpec)))
+                .setConstantHeadingInterpolation(scoreSpec.getHeading())
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
         prepSpec3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scoreSpec), new Point(midSpec)))
-                .setLinearHeadingInterpolation(scoreSpec.getHeading(), midSpec.getHeading())
-                .build();
-
-        prepSpec32 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(midSpec), new Point(positionSpec)))
-                .setLinearHeadingInterpolation(midSpec.getHeading(), positionSpec.getHeading())
+                .addPath(new BezierLine(new Point(scoreSpec), new Point(positionSpec)))
+                .setLinearHeadingInterpolation(scoreSpec.getHeading(), positionSpec.getHeading())
                 .build();
 
         spec3 = follower.pathBuilder()
@@ -123,16 +116,28 @@ public class FourSpecNextEXP extends PedroOpMode {
                 .build();
 
         scoreSpecimen3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickupSpec), new Point(scoreSpec)))
+                .addPath(new BezierLine(new Point(pickupSpec), new Point(controlSpec2)))
                 //scoreSpec2
-                .setLinearHeadingInterpolation(pickupSpec.getHeading(), scoreSpec.getHeading())
+                .setLinearHeadingInterpolation(pickupSpec.getHeading(), controlSpec.getHeading())
+                .build();
+
+        scoreSpecimen32 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(controlSpec2), new Point(scoreSpec2)))
+                //scoreSpec2
+                .setConstantHeadingInterpolation(scoreSpec.getHeading())
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
         scoreSpecimen4 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickupSpec), new Point(scoreSpec)))
+                .addPath(new BezierLine(new Point(pickupSpec), new Point(controlSpec3)))
                 //scoreSpec3
-                .setLinearHeadingInterpolation(pickupSpec.getHeading(), scoreSpec.getHeading())
+                .setLinearHeadingInterpolation(pickupSpec.getHeading(), controlSpec.getHeading())
+                .build();
+
+        scoreSpecimen42 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(controlSpec3), new Point(scoreSpec3)))
+                //scoreSpec2
+                .setConstantHeadingInterpolation(scoreSpec.getHeading())
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -144,17 +149,15 @@ public class FourSpecNextEXP extends PedroOpMode {
                 BackClaw.INSTANCE.setUp(),
                 BackClaw.INSTANCE.spinT(),
                 Extension.INSTANCE.in(),
-                new Delay(0.65),
+                new Delay(0.3),
 
                 new ParallelGroup(
                         new FollowPathWithSpeed(scoreSpecimen1, true, 0.85),
-                        SlideKits.INSTANCE.auto2()
+                        SlideKits.INSTANCE.auto()
                         ),
-                new Delay(0.2),
-
                 BackClaw.INSTANCE.clip(),
 
-                new Delay(5.0),
+                new Delay(0.3),
 
                 new ParallelGroup(
                         new FollowPath(block1),
@@ -170,7 +173,7 @@ public class FourSpecNextEXP extends PedroOpMode {
                 new FollowPath(block2),
 
                 new FollowPath(pushBlock2),
-                new Delay(0.2),
+                new Delay(0.4),
 
                 BackClaw.INSTANCE.setUp(),
                 new Delay(0.1),
@@ -178,22 +181,21 @@ public class FourSpecNextEXP extends PedroOpMode {
                 new ParallelGroup(
                         new FollowPath(scoreSpecimen2),
                         BackClaw.INSTANCE.spinT(),
-                        SlideKits.INSTANCE.auto()
+                        SlideKits.INSTANCE.auto2()
                 ),
-                new Delay(0.1),
+                new FollowPath(scoreSpecimen22),
 
                 BackClaw.INSTANCE.clip(),
 
-                new Delay(5.0),
+                new Delay(0.3),
 
                 new ParallelGroup(
-                        new FollowPath(prepSpec32),
+                        new FollowPath(prepSpec3),
                         SlideKits.INSTANCE.low(),
                         BackClaw.INSTANCE.prepare()
                 ),
 
                 new FollowPath(spec3),
-                new Delay(0.1),
 
                 BackClaw.INSTANCE.setUp(),
                 new Delay(0.1),
@@ -201,22 +203,21 @@ public class FourSpecNextEXP extends PedroOpMode {
                 new ParallelGroup(
                         new FollowPath(scoreSpecimen3),
                         BackClaw.INSTANCE.spinT(),
-                        SlideKits.INSTANCE.auto()
+                        SlideKits.INSTANCE.auto2()
                 ),
-                new Delay(0.1),
+                new FollowPath(scoreSpecimen32),
 
                 BackClaw.INSTANCE.clip(),
 
-                new Delay(5.0),
+                new Delay(0.3),
 
                 new ParallelGroup(
-                        new FollowPath(prepSpec32),
+                        new FollowPath(prepSpec3),
                         SlideKits.INSTANCE.low(),
                         BackClaw.INSTANCE.prepare()
                 ),
 
                 new FollowPath(spec3),
-                new Delay(0.1),
 
                 BackClaw.INSTANCE.setUp(),
                 new Delay(0.1),
@@ -224,21 +225,20 @@ public class FourSpecNextEXP extends PedroOpMode {
                 new ParallelGroup(
                         new FollowPath(scoreSpecimen4),
                         BackClaw.INSTANCE.spinT(),
-                        SlideKits.INSTANCE.auto()
+                        SlideKits.INSTANCE.auto2()
                 ),
-                new Delay(0.1),
+                new FollowPath(scoreSpecimen42),
 
                 BackClaw.INSTANCE.clip(),
 
-                new Delay(5.0),
+                new Delay(0.3),
 
-                BackClaw.INSTANCE.prepare(),
+                Intake.INSTANCE.drop(),
 
                 new Delay(0.2),
 
                 new ParallelGroup(
-                        SlideKits.INSTANCE.low(),
-                        BackClaw.INSTANCE.prepare()
+                        SlideKits.INSTANCE.low()
                 )
 
         );
