@@ -40,7 +40,7 @@ public class BackClaw extends Subsystem {
                             0.775,
                             this),
                     new ServoToPosition(clawBackRotateLeft,
-                            0.775,
+                            0.225,
                             this),
                     new ServoToPosition(clawBackSpin,
                             CSbot,
@@ -55,7 +55,7 @@ public class BackClaw extends Subsystem {
                         0.4,
                         this),
                 new ServoToPosition(clawBackRotateLeft,
-                        0.4,
+                        0.6,
                         this)
         );
     }
@@ -70,7 +70,7 @@ public class BackClaw extends Subsystem {
                         1,
                         this),
                 new ServoToPosition(clawBackRotateLeft,
-                        1,
+                        0,
                         this),
                 new ServoToPosition(clawBackSpin,
                         CSbot,
@@ -103,7 +103,7 @@ public class BackClaw extends Subsystem {
                                 0.8,
                                 this),
                         new ServoToPosition(clawBackRotateLeft,
-                                0.8,
+                                0.2,
                                 this)
                 ),
                 new Delay(0.5),
