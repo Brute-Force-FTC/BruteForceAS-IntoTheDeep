@@ -1,0 +1,276 @@
+package org.firstinspires.ftc.teamcode.Autonomous;
+
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Constants;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.rowanmcalpin.nextftc.core.command.Command;
+import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup;
+import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
+import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
+import com.rowanmcalpin.nextftc.pedro.FollowPath;
+import com.rowanmcalpin.nextftc.pedro.PedroOpMode;
+
+import org.firstinspires.ftc.teamcode.NextFTC.FollowPathWithSpeed;
+import org.firstinspires.ftc.teamcode.Utilities.BackClaw;
+import org.firstinspires.ftc.teamcode.Utilities.Claw;
+import org.firstinspires.ftc.teamcode.Utilities.Extension;
+import org.firstinspires.ftc.teamcode.Utilities.SlideKits;
+
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
+
+@Autonomous(name = "FourSpecNextEXPPP????😪🤤🥴😵💦🫳", group = "Autonomous")
+public class FourSpecNextEXP extends PedroOpMode {
+    public FourSpecNextEXP() {
+        super(Claw.INSTANCE, SlideKits.INSTANCE, BackClaw.INSTANCE, Extension.INSTANCE);
+    }
+
+    private final Pose startPose = new Pose(9.5, 60, Math.toRadians(0));
+
+    private final Pose scorePreload = new Pose(38, 60, Math.toRadians(0));
+
+    private final Pose middlePose = new Pose(37.4, 60, Math.toRadians(0));
+
+    private final Pose moveBlock1 = new Pose(50, 44, Math.toRadians(180));
+    private final Pose moveBlock1Control1 = new Pose(20, 36, Math.toRadians(180));
+
+    private final Pose parkBlock1 = new Pose(18, 27, Math.toRadians(180));
+    private final Pose parkBlock1Control = new Pose(65, 30.5, Math.toRadians(180));
+
+    private final Pose moveBlock2 = new Pose(55, 36, Math.toRadians(180));
+    private final Pose moveBlock2Control = new Pose(57, 6.5, Math.toRadians(180));
+
+    private final Pose pickupSpec1 = new Pose(8, 32, Math.toRadians(180));
+
+    private final Pose scoreSpec = new Pose(37.5, 71, Math.toRadians(0));
+    private final Pose scoreSpec2 = new Pose(37.5, 73, Math.toRadians(0));
+    private final Pose scoreSpec3 = new Pose(37.5, 75, Math.toRadians(0));
+    private final Pose scoreSpecControl = new Pose(4, 75, Math.toRadians(0));
+
+    private final Pose midSpec = new Pose(37.475, 71, Math.toRadians(0));
+    //4%: new Pose(36.12, 69.84, Math.toRadians(7.2));
+    //3%: new Pose(36.34. 70.13, Math.toRadians(5.4));
+    //2%: new Pose(36.56, 70.42, Math.toRadians(3.6));
+    //1%: new Pose(36.78, 70.71, Math.toRadians(1.8));
+
+    private final Pose positionSpec = new Pose(15, 42, Math.toRadians(180));
+
+    private final Pose pickupSpec = new Pose(9, 42, Math.toRadians(180));
+
+
+    private PathChain scoreSpecimen1, block1, block12, pushBlock1, block2, pushBlock2,
+            scoreSpecimen2, prepSpec3, spec3, scoreSpecimen3, prepSpec32, scoreSpecimen4;
+
+    public void buildPaths() {
+
+        scoreSpecimen1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(startPose), new Point(scorePreload)))
+                .setConstantHeadingInterpolation(startPose.getHeading())
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+        block12 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePreload), new Point(middlePose)))
+                .setConstantHeadingInterpolation(middlePose.getHeading())
+                .build();
+
+        block1 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(middlePose), new Point(moveBlock1Control1), new Point(moveBlock1)))
+                .setTangentHeadingInterpolation()
+                .setReversed(true)
+                .build();
+
+        pushBlock1 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(moveBlock1), new Point(parkBlock1Control), new Point(parkBlock1)))
+                .setConstantHeadingInterpolation(moveBlock1.getHeading())
+                .build();
+
+        block2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(parkBlock1), new Point(moveBlock2)))
+                .setConstantHeadingInterpolation(parkBlock1.getHeading())
+                .build();
+
+        pushBlock2 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(moveBlock2), new Point(moveBlock2Control), new Point(pickupSpec1)))
+                .setConstantHeadingInterpolation(moveBlock2.getHeading())
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+        scoreSpecimen2 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(pickupSpec1), new Point (scoreSpecControl), new Point(scoreSpec)))
+                .setLinearHeadingInterpolation(pickupSpec1.getHeading(), scoreSpec.getHeading())
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+        prepSpec3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scoreSpec), new Point(midSpec)))
+                .setLinearHeadingInterpolation(scoreSpec.getHeading(), midSpec.getHeading())
+                .build();
+
+        prepSpec32 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(midSpec), new Point(positionSpec)))
+                .setLinearHeadingInterpolation(midSpec.getHeading(), positionSpec.getHeading())
+                .build();
+
+        spec3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(positionSpec), new Point(pickupSpec)))
+                .setConstantHeadingInterpolation(positionSpec.getHeading())
+                .build();
+
+        scoreSpecimen3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickupSpec), new Point(scoreSpec)))
+                //scoreSpec2
+                .setLinearHeadingInterpolation(pickupSpec.getHeading(), scoreSpec.getHeading())
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+        scoreSpecimen4 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickupSpec), new Point(scoreSpec)))
+                //scoreSpec3
+                .setLinearHeadingInterpolation(pickupSpec.getHeading(), scoreSpec.getHeading())
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+    }
+
+    public Command autoPathUpdate() {
+        return new SequentialGroup(
+                SlideKits.INSTANCE.getResetEncoders(),
+                BackClaw.INSTANCE.setUp(),
+                BackClaw.INSTANCE.spinT(),
+                Extension.INSTANCE.in(),
+                new Delay(0.65),
+
+                new ParallelGroup(
+                        new FollowPathWithSpeed(scoreSpecimen1, true, 0.85),
+                        SlideKits.INSTANCE.auto2()
+                        ),
+                new Delay(0.2),
+
+                BackClaw.INSTANCE.clip(),
+
+                new Delay(5.0),
+
+                new ParallelGroup(
+                        new FollowPath(block1),
+                        BackClaw.INSTANCE.prepare()
+                ),
+
+                new ParallelGroup(
+                        new FollowPath(pushBlock1),
+                        SlideKits.INSTANCE.low(),
+                        Claw.INSTANCE.zero()
+                ),
+
+                new FollowPath(block2),
+
+                new FollowPath(pushBlock2),
+                new Delay(0.2),
+
+                BackClaw.INSTANCE.setUp(),
+                new Delay(0.1),
+
+                new ParallelGroup(
+                        new FollowPath(scoreSpecimen2),
+                        BackClaw.INSTANCE.spinT(),
+                        SlideKits.INSTANCE.auto()
+                ),
+                new Delay(0.1),
+
+                BackClaw.INSTANCE.clip(),
+
+                new Delay(5.0),
+
+                new ParallelGroup(
+                        new FollowPath(prepSpec32),
+                        SlideKits.INSTANCE.low(),
+                        BackClaw.INSTANCE.prepare()
+                ),
+
+                new FollowPath(spec3),
+                new Delay(0.1),
+
+                BackClaw.INSTANCE.setUp(),
+                new Delay(0.1),
+
+                new ParallelGroup(
+                        new FollowPath(scoreSpecimen3),
+                        BackClaw.INSTANCE.spinT(),
+                        SlideKits.INSTANCE.auto()
+                ),
+                new Delay(0.1),
+
+                BackClaw.INSTANCE.clip(),
+
+                new Delay(5.0),
+
+                new ParallelGroup(
+                        new FollowPath(prepSpec32),
+                        SlideKits.INSTANCE.low(),
+                        BackClaw.INSTANCE.prepare()
+                ),
+
+                new FollowPath(spec3),
+                new Delay(0.1),
+
+                BackClaw.INSTANCE.setUp(),
+                new Delay(0.1),
+
+                new ParallelGroup(
+                        new FollowPath(scoreSpecimen4),
+                        BackClaw.INSTANCE.spinT(),
+                        SlideKits.INSTANCE.auto()
+                ),
+                new Delay(0.1),
+
+                BackClaw.INSTANCE.clip(),
+
+                new Delay(5.0),
+
+                BackClaw.INSTANCE.prepare(),
+
+                new Delay(0.2),
+
+                new ParallelGroup(
+                        SlideKits.INSTANCE.low(),
+                        BackClaw.INSTANCE.prepare()
+                )
+
+        );
+    }
+
+    @Override
+    public void onUpdate() {
+
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("isBusy", follower.isBusy());
+        telemetry.addData("isStuck", follower.isRobotStuck());
+        telemetry.addData("isCooked", follower.isPinpointCooked());
+        telemetry.addData("slideKitPosition", SlideKits.INSTANCE.motor.getCurrentPosition());
+        telemetry.addData("slideKitTargetPosition", SlideKits.INSTANCE.controller.getTarget());
+        telemetry.update();
+    }
+
+    @Override
+    public void onInit() {
+
+        Constants.setConstants(FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(startPose);
+        buildPaths();
+    }
+
+    @Override
+    public void onStartButtonPressed() {
+        autoPathUpdate().invoke();
+    }
+
+}
+
