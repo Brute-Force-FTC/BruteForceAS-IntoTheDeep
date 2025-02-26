@@ -164,8 +164,12 @@ public class BFTeleOpNextBlue extends PedroOpMode {
         gamepadManager.getGamepad2().getDpadDown().setPressedCommand(Intake.INSTANCE::drop);
 
         // Slide Kits
-        gamepadManager.getGamepad2().getY().setPressedCommand(SlideKits.INSTANCE::middle);
-        gamepadManager.getGamepad2().getB().setPressedCommand(SlideKits.INSTANCE::low);
+        gamepadManager.getGamepad2().getY().setPressedCommand( () ->
+                new SequentialGroup(
+                        BackClaw.INSTANCE.prepare(),
+                        SlideKits.INSTANCE.low()
+                ));
+        gamepadManager.getGamepad2().getB().setPressedCommand(Lights.INSTANCE::green);
         gamepadManager.getGamepad2().getRightStick().getButton().setPressedCommand(SlideKits.INSTANCE::clip);
 
         // Reset 💀⚡
